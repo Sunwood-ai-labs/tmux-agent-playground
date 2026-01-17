@@ -1,0 +1,43 @@
+# {EXPERIMENT_NAME}
+
+**実験ID**: {EXPERIMENT_ID}
+**作成日**: {DATE}
+**エージェント数**: {AGENT_COUNT}
+
+## 概要
+
+{DESCRIPTION}
+
+## 目的
+
+{PURPOSE}
+
+## セットアップ
+
+```bash
+# tmuxセッションを作成
+./setup.sh
+
+# 各ペインでClaude Codeを起動（手動）
+tmux attach -t {EXPERIMENT_ID}
+# 各ペインで: ccode
+```
+
+## 実行
+
+```bash
+# 全エージェントにタスクを送信
+./run.sh
+```
+
+## 結果
+
+結果は `results/` ディレクトリに保存されます。
+
+## メモ
+
+{NOTES}
+
+## 実験ログ
+
+- `{DATE}`: 実験作成

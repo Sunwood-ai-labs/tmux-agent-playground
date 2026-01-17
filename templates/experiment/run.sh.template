@@ -1,0 +1,61 @@
+#!/bin/bash
+# {EXPERIMENT_NAME} - Run Script
+# このスクリプトは各エージェントにタスクを割り当てます
+
+set -e
+
+SESSION_NAME="{EXPERIMENT_ID}"
+AGENT_COUNT={AGENT_COUNT}
+
+echo "Running {EXPERIMENT_ID}..."
+echo "Agent count: $AGENT_COUNT"
+echo ""
+
+# エージェントが起動しているか確認
+if ! tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+  echo "❌ Error: Session '$SESSION_NAME' not found"
+  echo "   Please run ./setup.sh first"
+  exit 1
+fi
+
+# 各エージェントにタスクを送信
+# ここに実験内容に応じた指示を記述
+
+case $AGENT_COUNT in
+  2)
+    echo "📤 Sending task to Agent 1 (pane 0.1)..."
+    tmux send-keys -t "$SESSION_NAME:0.1" "{TASK_AGENT_1}" Enter
+    sleep 2
+    tmux send-keys -t "$SESSION_NAME:0.1" Enter
+    ;;
+  3)
+    echo "📤 Sending task to Agent 1 (pane 0.1)..."
+    tmux send-keys -t "$SESSION_NAME:0.1" "{TASK_AGENT_1}" Enter
+    sleep 2
+    tmux send-keys -t "$SESSION_NAME:0.1" Enter
+
+    echo "📤 Sending task to Agent 2 (pane 0.2)..."
+    tmux send-keys -t "$SESSION_NAME:0.2" "{TASK_AGENT_2}" Enter
+    sleep 2
+    tmux send-keys -t "$SESSION_NAME:0.2" Enter
+    ;;
+  *)
+    echo "📤 Sending tasks to $AGENT_COUNT agents..."
+    for ((i=1; i<$AGENT_COUNT; i++)); do
+      echo "   Agent $i (pane 0.$i)..."
+      tmux send-keys -t "$SESSION_NAME:0.$i" "{TASK_AGENT_$i}" Enter
+      sleep 2
+      tmux send-keys -t "$SESSION_NAME:0.$i" Enter
+    done
+    ;;
+esac
+
+echo ""
+echo "✅ Tasks sent to all agents!"
+echo ""
+echo "Monitor progress:"
+echo "  tmux attach -t $SESSION_NAME"
+echo ""
+echo "Check results:"
+echo "  ls results/"
+echo ""

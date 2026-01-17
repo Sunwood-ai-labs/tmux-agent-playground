@@ -76,8 +76,22 @@ tmux attach -t dev
 
 ```
 tmux-agent-playground/
-├── scripts/          # スクリプトファイル
+├── experiments/      # 実験フォルダ（各実験のスクリプトと成果物）
+│   ├── experiment-001-code-review-3agents/
+│   │   ├── setup.sh        # tmuxセッション作成スクリプト
+│   │   ├── run.sh          # タスク送信スクリプト
+│   │   ├── README.md       # 実験の説明
+│   │   └── results/        # 成果物保存場所
+│   └── experiment-002-parallel-refactor-5agents/
+│       └── ...
+├── scripts/          # ユーティリティスクリプト
+│   ├── create-experiment.sh  # 実験テンプレート生成スクリプト
 │   └── tmux-agents-guide.md  # エージェント操作ガイド
+├── templates/        # 実験テンプレート
+│   └── experiment/
+│       ├── setup.sh.template
+│       ├── run.sh.template
+│       └── README.md.template
 ├── assets/           # 画像等のリソース
 │   └── header.svg    # ヘッダー画像
 ├── README.md
@@ -107,6 +121,60 @@ tmux capture-pane -t dev:0.1 -p -S -50
 ### 詳細な使い方
 
 詳細な操作方法は [scripts/tmux-agents-guide.md](scripts/tmux-agents-guide.md) を参照してください。
+
+---
+
+## 実験の作成と実行
+
+`create-experiment.sh` スクリプトを使って、新しい実験を簡単に作成できます。
+
+### 新しい実験を作成
+
+```bash
+# 実験名とエージェント数を指定
+./scripts/create-experiment.sh <experiment-name> [agent-count]
+
+# 例: 3エージェントでコードレビュー実験を作成
+./scripts/create-experiment.sh code-review-3agents 3
+
+# 例: 5エージェントで並列リファクタリング実験を作成
+./scripts/create-experiment.sh parallel-refactor-5agents 5
+```
+
+### 実験を実行
+
+```bash
+# 作成された実験ディレクトリに移動
+cd experiments/experiment-001-code-review-3agents
+
+# 1. tmuxセッションを作成
+./setup.sh
+
+# 2. tmuxセッションにアタッチして、各ペインでClaude Codeを起動
+tmux attach -t experiment-001
+# 各ペインで: ccode
+
+# 3. セッションからデタッチ（Ctrl+b, d）
+# 4. 各エージェントにタスクを送信
+./run.sh
+
+# 5. 進捗を確認
+tmux attach -t experiment-001
+```
+
+### 実験結果
+
+結果は `experiments/<experiment-id>/results/` ディレクトリに保存されます。
+
+### 実験テンプレート
+
+実験は以下のテンプレートから生成されます：
+
+- `setup.sh` - tmuxセッションのレイアウト設定
+- `run.sh` - 各エージェントへのタスク送信
+- `README.md` - 実験の説明
+
+必要に応じてカスタマイズして使用してください。
 
 ---
 
